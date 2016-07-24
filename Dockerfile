@@ -1,14 +1,13 @@
-FROM centos:7
-MAINTAINER _CNOC_Voice_BCVTools_@cable.comcast.com
+FROM python:latest
+MAINTAINER kanewinter@github
+ENV SRC_DIR=/usr/src/app/
 
-RUN yum update -y
-RUN yum install -y bind-utils ntp less
+RUN apt-get update -y && apt-get install -y python-pip
 
-ENV SRC_DIR=/src
-ENV PATH=$PATH:$SRC_DIR/bin
+COPY ./Pipfile $WORKDIR
 
-RUN mkdir -p $SRC_DIR
-COPY . $SRC_DIR
-WORKDIR $SRC_DIR
+RUN pip install -r $WORKDIR/Pipfile
 
-CMD bash -C 'docker-startup.bash';'bash'
+COPY ./code/* $SRC_DIR
+
+CMD [ "python", "./mapIt2.py" ]
